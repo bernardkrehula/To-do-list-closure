@@ -4,28 +4,40 @@ let btn = document.querySelector(".btn");
 let main = document.querySelector(".main");
 let list = document.querySelector(".main li");
 let toDoInput;
-let id;
-let activeId;
-let activeIndex;
+
+//U manager napravi funkciju deleteToDo
+//Ona treba da primi jedan argument - id
+//Kad dobije taj id ona kaze: 
+//ToDoArray = svi toDovi osim ovoga sa ovim id koji sam dobio
+//To ce izbrisati toDo iz arraya 
+//I svaki put kad pozovem manager.getToDos dobit cu array u kojem taj toDo nije vise
+
+//Sto se tice ekrana i kako id da proslijedim u manager 
+//Kad postavljam toDO na ekran ja mu stavim id
+//Kad kliknem na neki toDo procitam taj id sa njega 
+//Proslijedim ga u funkciju manager.deleteToDo
 
 function toDoManager() {
     let toDoArray = [];
-    const getIndex = (currentManagerId) => {
-        currentManagerId = toDoArray.find((element) => {
-        return element.id == activeId;
-        });
-        activeIndex = toDoArray.indexOf(currentManagerId);
-    };
     const addToDo = (toDo) => {
         toDoArray.push(toDo);
     };
     const getToDos = () => {
         return toDoArray;
     };
-    const deleteText = () => {
-        toDoArray.splice(activeIndex, 1);
-    };
-    return { addToDo, getToDos, deleteText, getIndex };
+   
+    const deleteToDo = (eventId) => {
+        let id = eventId;
+        toDoArray = toDoArray.filter(objekt => objekt.id !== id)
+        return toDoArray;
+    }
+    return { addToDo, getToDos, deleteToDo };
+}
+function toDoCreator(toDoValue) {
+    let id = crypto.randomUUID();
+    value = toDoValue;
+    const getId = () => {return id}
+    return {getId, value, id};
 }
 const manager = toDoManager();
 
@@ -34,15 +46,13 @@ input.addEventListener("input", (e) => {
 });
 
 btn.addEventListener("click", () => {
-    const newToDo = { id: crypto.randomUUID(), value: toDoInput };
+    const newToDo = toDoCreator(toDoInput);
     manager.addToDo(newToDo);
-    id = newToDo.id;
-    newToDoValue = newToDo.value;
-    makeNewBtn(id, newToDoValue);
+    makeNewBtn(newToDo.getId(), toDoInput);
     removeInputValue()
 });
-function makeNewBtn(id, newToDoValue) {
-    const html = `<button class="dugme" id="${id}">${newToDoValue}</button>`;
+function makeNewBtn(id, toDoInput) {
+    const html = `<button class="dugme" id="${id}">${toDoInput}</button>`;
     list = document.querySelector(".main li");
     list.insertAdjacentHTML("beforeend", html);
 }
@@ -50,10 +60,7 @@ function makeNewBtn(id, newToDoValue) {
 main.addEventListener("click", (event) => {
     if (event.target.className == "dugme") {
         removeBtn(event);
-        activeId = event.target.id;
-        manager.getIndex();
-        manager.deleteText();
-        console.log(manager.getToDos())
+        manager.deleteToDo(event.target.id);
     }
 });
 
