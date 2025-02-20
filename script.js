@@ -37,7 +37,8 @@ function toDoCreator(toDoValue) {
     let id = crypto.randomUUID();
     value = toDoValue;
     const getId = () => {return id}
-    return {getId, value, id};
+    const getValue = () => value;
+    return {getId, getValue};
 }
 const manager = toDoManager();
 
@@ -48,7 +49,7 @@ input.addEventListener("input", (e) => {
 btn.addEventListener("click", () => {
     const newToDo = toDoCreator(toDoInput);
     manager.addToDo(newToDo);
-    makeNewBtn(newToDo.getId(), toDoInput);
+    makeNewBtn(newToDo.getId(), newToDo.getValue());
     removeInputValue()
 });
 function makeNewBtn(id, toDoInput) {
@@ -73,22 +74,3 @@ function removeBtn(event) {
 function removeInputValue() {
     input.value = '';
 }
-
-/* function counterCreator() {
-    let count = 0;
-    const getCount = () => {
-        return count;
-    }
-    const incrementCount = () => {
-        count += 1;
-    }
-    return {getCount, incrementCount};
-}
-
-const count1 = counterCreator();
-count1.incrementCount();
-count1.incrementCount();
-count1.incrementCount();
-console.log('count1: ', count1.getCount());
-const count2 = counterCreator();
-console.log('count2: ', count2.getCount()); */
